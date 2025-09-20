@@ -53,6 +53,9 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     testImplementation(libs.junit)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.androidx.core.testing)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -61,6 +64,7 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.compose.runtime.livedata)
     implementation(libs.kotlinx.coroutines.android)
     testImplementation(libs.kotlinx.coroutines.test)
 
@@ -69,9 +73,13 @@ dependencies {
     implementation(libs.logging.interceptor)
 
     implementation(libs.coil.compose)
+    implementation(libs.accompanist.swiperefresh)
+
+    implementation(libs.androidx.navigation.compose)
 
     implementation(libs.hilt.android)
     ksp(libs.dagger.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
 
     implementation(libs.androidx.paging.runtime.ktx)
     implementation(libs.androidx.paging.compose)
