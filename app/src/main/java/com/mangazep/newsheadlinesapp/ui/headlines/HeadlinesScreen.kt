@@ -1,27 +1,36 @@
 package com.mangazep.newsheadlinesapp.ui.headlines
 
-import androidx.compose.material3.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.*
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.LoadState
-import androidx.paging.compose.LazyPagingItems
-import com.mangazep.newsheadlinesapp.data.model.Article
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import com.mangazep.newsheadlinesapp.data.model.Article
 import com.mangazep.newsheadlinesapp.ui.components.ArticleItem
 import com.mangazep.newsheadlinesapp.ui.components.ErrorMessage
 import com.mangazep.newsheadlinesapp.ui.components.LoadingIndicator
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,26 +39,16 @@ fun HeadlinesScreen(
     viewModel: HeadlinesViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.observeAsState(initial = HeadlinesUiState.Loading)
-    val isRefreshing by viewModel.isRefreshing.observeAsState(initial = false)
     val navigateToDetail by viewModel.navigateToDetail.observeAsState()
-
     val pagingItems = viewModel.headlinesPagingData.collectAsLazyPagingItems()
-    
+
+
     LaunchedEffect(navigateToDetail) {
         navigateToDetail?.let { article ->
-            val encodedTitle = URLEncoder.encode(
-                article.title ?: "",
-                StandardCharsets.UTF_8.toString()
-            )
-            val encodedDescription = URLEncoder.encode(
-                article.description ?: "",
-                StandardCharsets.UTF_8.toString()
-            )
-            val encodedImageUrl = URLEncoder.encode(
-                article.urlToImage ?: "",
-                StandardCharsets.UTF_8.toString()
-            )
-            navController.navigate("detail/$encodedTitle/$encodedDescription/$encodedImageUrl")
+            navController.currentBackStackEntry
+                ?.savedStateHandle
+                ?.set("article", article)
+            navController.navigate("detail")
             viewModel.onNavigatedToDetail()
         }
     }
@@ -59,15 +58,16 @@ fun HeadlinesScreen(
             is LoadState.Loading -> {
                 viewModel.onLoadStateUpdate(isLoading = true)
             }
+
             is LoadState.Error -> {
                 viewModel.onLoadStateUpdate(
                     isLoading = false,
                     errorMessage = refresh.error.localizedMessage
                 )
             }
+
             is LoadState.NotLoading -> {
                 viewModel.onLoadStateUpdate(isLoading = false)
-                viewModel.onRefreshComplete()
             }
         }
     }
@@ -83,25 +83,13 @@ fun HeadlinesScreen(
             )
         }
     ) { paddingValues ->
-        SwipeRefresh(
-            state = rememberSwipeRefreshState(isRefreshing),
-            onRefresh = {
-                viewModel.onRefresh()
-                pagingItems.refresh()
-            },
+        HeadlinesContent(
+            uiState = uiState,
+            pagingItems = pagingItems,
+            onArticleClick = { article -> viewModel.onArticleClicked(article) },
+            onRetryClick = { pagingItems.retry() },
             modifier = Modifier.padding(paddingValues)
-        ) {
-            HeadlinesContent(
-                uiState = uiState,
-                pagingItems = pagingItems,
-                onArticleClick = { article ->
-                    viewModel.onArticleClicked(article)
-                },
-                onRetryClick = {
-                    pagingItems.retry()
-                }
-            )
-        }
+        )
     }
 }
 
@@ -154,6 +142,7 @@ fun HeadlinesContent(
                                     )
                                 }
                             }
+
                             loadState.append is LoadState.Error -> {
                                 item {
                                     ErrorMessage(

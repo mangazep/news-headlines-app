@@ -24,10 +24,6 @@ class HeadlinesViewModel @Inject constructor(repository: NewsRepository) : ViewM
     private val _uiState = MutableLiveData<HeadlinesUiState>()
     val uiState: LiveData<HeadlinesUiState> = _uiState
 
-    // LiveData untuk refresh state
-    private val _isRefreshing = MutableLiveData<Boolean>()
-    val isRefreshing: LiveData<Boolean> = _isRefreshing
-
     // LiveData untuk selected article (untuk navigation)
     private val _navigateToDetail = MutableLiveData<Article?>()
     val navigateToDetail: LiveData<Article?> = _navigateToDetail
@@ -50,14 +46,6 @@ class HeadlinesViewModel @Inject constructor(repository: NewsRepository) : ViewM
 
     fun onNavigatedToDetail() {
         _navigateToDetail.value = null
-    }
-
-    fun onRefresh() {
-        _isRefreshing.value = true
-    }
-
-    fun onRefreshComplete() {
-        _isRefreshing.value = false
     }
 }
 
