@@ -15,16 +15,16 @@ import javax.inject.Inject
 @HiltViewModel
 class HeadlinesViewModel @Inject constructor(repository: NewsRepository) : ViewModel() {
 
-    //flow data news paging
+    //flow data news paging3
     val headlinesPagingData: Flow<PagingData<Article>> = repository
         .getNewsHeadlines()
         .cachedIn(viewModelScope)
 
-    // LiveData untuk UI States
-    private val _uiState = MutableLiveData<HeadlinesUiState>()
-    val uiState: LiveData<HeadlinesUiState> = _uiState
+    // state loading, error success
+    private val _uiState = MutableLiveData<UiState>()
+    val uiState: LiveData<UiState> = _uiState
 
-    // LiveData untuk selected article (untuk navigation)
+    // navigate to detail screen
     private val _navigateToDetail = MutableLiveData<Article?>()
     val navigateToDetail: LiveData<Article?> = _navigateToDetail
 
@@ -33,7 +33,7 @@ class HeadlinesViewModel @Inject constructor(repository: NewsRepository) : ViewM
     val snackbarMessage: LiveData<String?> = _snackbarMessage
 
     init {
-        _uiState.value = HeadlinesUiState.Loading
+        _uiState.value = UiState.Loading
     }
 
     fun onLoadStateUpdate(
@@ -42,14 +42,14 @@ class HeadlinesViewModel @Inject constructor(repository: NewsRepository) : ViewM
         isEmpty: Boolean = false
     ) {
         _uiState.value = when {
-            isLoading -> HeadlinesUiState.Loading
-            errorMessage != null -> HeadlinesUiState.Error(errorMessage)
+            isLoading -> UiState.Loading
+            errorMessage != null -> UiState.Error(errorMessage)
             isEmpty -> {
                 _snackbarMessage.value = "Data News is empty"
-                HeadlinesUiState.Empty
+                UiState.Empty
             }
 
-            else -> HeadlinesUiState.Success
+            else -> UiState.Success
         }
     }
 
@@ -66,9 +66,9 @@ class HeadlinesViewModel @Inject constructor(repository: NewsRepository) : ViewM
     }
 }
 
-sealed class HeadlinesUiState {
-    object Loading : HeadlinesUiState()
-    object Success : HeadlinesUiState()
-    object Empty : HeadlinesUiState()
-    data class Error(val message: String) : HeadlinesUiState()
+sealed class UiState {
+    object Loading : UiState()
+    object Success : UiState()
+    object Empty : UiState()
+    data class Error(val message: String) : UiState()
 }

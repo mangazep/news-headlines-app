@@ -1,5 +1,6 @@
 package com.mangazep.newsheadlinesapp.ui.headlines
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,13 +47,14 @@ fun HeadlinesScreen(
     navController: NavController,
     viewModel: HeadlinesViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiState.observeAsState(initial = HeadlinesUiState.Loading)
+    val uiState by viewModel.uiState.observeAsState(initial = UiState.Loading)
     val navigateToDetail by viewModel.navigateToDetail.observeAsState()
     val pagingItems = viewModel.headlinesPagingData.collectAsLazyPagingItems()
     val snackbarMessage by viewModel.snackbarMessage.observeAsState()
 
     val snackbarHostState = remember { SnackbarHostState() }
 
+    //on click to detail
     LaunchedEffect(navigateToDetail) {
         navigateToDetail?.let { article ->
             navController.currentBackStackEntry
@@ -105,7 +107,7 @@ fun HeadlinesScreen(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
-        HeadlinesContent(
+        LoadData(
             uiState = uiState,
             pagingItems = pagingItems,
             onArticleClick = { article -> viewModel.onArticleClicked(article) },
@@ -116,32 +118,29 @@ fun HeadlinesScreen(
 }
 
 @Composable
-fun HeadlinesContent(
-    uiState: HeadlinesUiState,
+fun LoadData(
+    uiState: UiState,
     pagingItems: LazyPagingItems<Article>,
     onArticleClick: (Article) -> Unit,
     onRetryClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    Log.d("TEST", "load data")
     Box(modifier = modifier.fillMaxSize()) {
         when (uiState) {
-            is HeadlinesUiState.Loading -> {
+            is UiState.Loading -> {
                 LoadingIndicator(
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
 
-            is HeadlinesUiState.Empty -> {
+            is UiState.Empty -> {
                 Column(
                     modifier = Modifier
                         .align(Alignment.Center)
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
-                        text = "📰",
-                        style = MaterialTheme.typography.displayLarge
-                    )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = "News Not Available",
@@ -149,7 +148,7 @@ fun HeadlinesContent(
                         textAlign = TextAlign.Center
                     )
                     Text(
-                        text = "Try refreshing or checking your internet connection",
+                        text = "Try refreshing ",
                         style = MaterialTheme.typography.bodyMedium,
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -161,7 +160,7 @@ fun HeadlinesContent(
                 }
             }
 
-            is HeadlinesUiState.Error -> {
+            is UiState.Error -> {
                 ErrorMessage(
                     message = uiState.message,
                     onRetryClick = onRetryClick,
@@ -169,7 +168,7 @@ fun HeadlinesContent(
                 )
             }
 
-            is HeadlinesUiState.Success -> {
+            is UiState.Success -> {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(16.dp),
@@ -199,7 +198,7 @@ fun HeadlinesContent(
                                 item {
                                     ErrorMessage(
                                         message = (loadState.append as LoadState.Error).error.localizedMessage
-                                            ?: "Error loading more items",
+                                            ?: "Error loading",
                                         onRetryClick = { retry() },
                                         modifier = Modifier
                                             .fillMaxWidth()
