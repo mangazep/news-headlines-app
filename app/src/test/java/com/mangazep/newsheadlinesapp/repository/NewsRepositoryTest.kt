@@ -33,7 +33,7 @@ class NewsRepositoryTest {
     }
 
     @Test
-    fun `test getNewsHeadlines returns flow of paging data`() = runTest {
+    fun `get data using flow paging data`() = runTest {
         // Given
         val mockResponse = NewsResponse(
             status = "ok",
