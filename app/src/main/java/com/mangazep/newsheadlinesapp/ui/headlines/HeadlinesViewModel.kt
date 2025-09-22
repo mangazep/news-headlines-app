@@ -28,14 +28,27 @@ class HeadlinesViewModel @Inject constructor(repository: NewsRepository) : ViewM
     private val _navigateToDetail = MutableLiveData<Article?>()
     val navigateToDetail: LiveData<Article?> = _navigateToDetail
 
+    // snack bar message
+    private val _snackbarMessage = MutableLiveData<String?>()
+    val snackbarMessage: LiveData<String?> = _snackbarMessage
+
     init {
         _uiState.value = HeadlinesUiState.Loading
     }
 
-    fun onLoadStateUpdate(isLoading: Boolean, errorMessage: String? = null) {
+    fun onLoadStateUpdate(
+        isLoading: Boolean,
+        errorMessage: String? = null,
+        isEmpty: Boolean = false
+    ) {
         _uiState.value = when {
             isLoading -> HeadlinesUiState.Loading
             errorMessage != null -> HeadlinesUiState.Error(errorMessage)
+            isEmpty -> {
+                _snackbarMessage.value = "Data News is empty"
+                HeadlinesUiState.Empty
+            }
+
             else -> HeadlinesUiState.Success
         }
     }
@@ -47,10 +60,15 @@ class HeadlinesViewModel @Inject constructor(repository: NewsRepository) : ViewM
     fun onNavigatedToDetail() {
         _navigateToDetail.value = null
     }
+
+    fun clearSnackbarMessage() {
+        _snackbarMessage.value = null
+    }
 }
 
 sealed class HeadlinesUiState {
     object Loading : HeadlinesUiState()
     object Success : HeadlinesUiState()
+    object Empty : HeadlinesUiState()
     data class Error(val message: String) : HeadlinesUiState()
 }
