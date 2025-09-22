@@ -96,7 +96,7 @@ fun DetailScreen(
                 )
             }
         } else {
-            DetailContent(
+            LoadData(
                 article = article!!,
                 modifier = Modifier.padding(paddingValues)
             )
@@ -105,7 +105,7 @@ fun DetailScreen(
 }
 
 @Composable
-fun DetailContent(
+fun LoadData(
     article: Article,
     modifier: Modifier = Modifier
 ) {
