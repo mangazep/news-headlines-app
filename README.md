@@ -46,15 +46,15 @@ navigasi ke detail artikel.
 
 ### 1. **Clean Architecture Implementation**
 
-- **MVVM Pattern** dengan proper separation of concerns
+- **MVVM Pattern** dengan separation of concerns
 - **Repository Pattern** untuk clean data layer abstraction
 - **Dependency Injection** menggunakan Hilt untuk scalable codebase
-- **Package structure** yang terorganisir dengan baik
+- **Package structure** terorganisir dengan baik
 
 ### 2. **Modern Android Development Stack**
 
 - **Jetpack Compose** untuk modern, declarative UI
-- **Paging 3** untuk efficient data loading dengan infinite scroll
+- **Paging 3** untuk efisiensi data loading dengan infinite scroll
 - **Navigation Compose** untuk type-safe navigation
 - **Coroutines + Flow** untuk reactive programming
 
@@ -67,16 +67,15 @@ navigasi ke detail artikel.
 
 ### 4. **Professional UI/UX**
 
-- **Material Design 3** components
-- **Responsive image loading** dengan Coil
-- **Proper state management** dengan sealed classes
-- **Snackbar notifications** untuk user feedback
+- **Material Design 3** komponen
+- **Responsive image loading** dengan Coil untuk image
+- **Snackbar notifications** untuk user messages
 
 ### 5. **Robust Testing Strategy**
 
 - **Unit tests** untuk ViewModel dan Repository layers
 - **Mocking strategies** untuk network calls
-- **Edge case testing** (empty data, network errors)
+- **Edge case testing** (empty data)
 
 ## 🔧 What I'd Improve or Add Next
 
@@ -84,7 +83,7 @@ navigasi ke detail artikel.
 
 - **Offline support** dengan Room database caching
 - **Search functionality** untuk filtering articles
-- **Category filtering** (sports, technology, etc.)
+- **Category filtering** update params api (sports, technology, etc.)
 - **Share article** functionality
 - **Bookmark/Favorites** feature
 - **Dark theme** support
@@ -99,14 +98,15 @@ navigasi ke detail artikel.
 
 ### 1. **Country Parameter Issue**
 
-**Challenge**: Default country parameter menggunakan `"us"` yang tidak sesuai requirement Indonesia.
+**Challenge**: Default country parameter menggunakan `"us"` yang tidak sesuai requirement Indonesia,
+karena jika menggunakan `"id"` data dari API kosong.
 
 **Solution**:
 
 - Update [
   `NewsApiService.kt`](app/src/main/java/com/mangazep/newsheadlinesapp/data/api/NewsApiService.kt)
   default country ke `"id"`
-- Implementasi fallback mechanism jika data Indonesia kosong
+- Implementasi pesan jika data Indonesia kosong
 
 ### 2. **Empty State Handling**
 
@@ -114,9 +114,9 @@ navigasi ke detail artikel.
 
 **Solution**:
 
-- Tambah `HeadlinesUiState.Empty` state
+- Tambah `UiState.Empty` state
 - Implementasi snackbar message untuk empty state
-- Buat dedicated empty state UI dengan retry button
+- Membuat dedicated empty state UI dengan retry button
 
 ### 3. **Paging Implementation**
 
@@ -130,7 +130,7 @@ navigasi ke detail artikel.
 
 ### 4. **Navigation with Complex Data**
 
-**Challenge**: Passing Article object antar screen dengan type safety.
+**Challenge**: Passing Parcelable Article object antar screen dengan type safety.
 
 **Solution**:
 
@@ -145,8 +145,7 @@ navigasi ke detail artikel.
 **Solution**:
 
 - Implementasi `InstantTaskExecutorRule` untuk LiveData testing
-- Gunakan `TestDispatcher` untuk coroutines testing
-- Mock network calls dengan `doAnswer` untuk suspend functions
+- Menggunakan `TestDispatcher` untuk coroutines testing
 
 ### 6. **Image Loading Performance**
 
@@ -155,7 +154,7 @@ navigasi ke detail artikel.
 **Solution**:
 
 - Implementasi **Coil** untuk efficient image loading
-- Placeholder dan error handling untuk images
+- Placeholder dan error handling untuk images null
 - Proper sizing dan content scaling
 
 ## 🏗️ Architecture Overview
@@ -189,15 +188,14 @@ navigasi ke detail artikel.
 | **Image Loading** | Coil                      |
 | **Pagination**    | Paging 3                  |
 | **Navigation**    | Navigation Compose        |
-| **Testing**       | JUnit + Mockito + Truth   |
+| **Testing**       | JUnit + Mockito           |
 | **Build Tool**    | Gradle (Kotlin DSL)       |
 
 ## 📊 Key Features
 
 - ✅ **News Headlines List** dengan infinite scrolling
 - ✅ **Article Detail View** dengan title, description, dan image
-- ✅ **Pull-to-refresh** functionality
-- ✅ **Error handling** dengan retry mechanism
+- ✅ **Error handling** dengan retry
 - ✅ **Loading indicators** untuk better UX
 - ✅ **Empty state handling** dengan snackbar notifications
 - ✅ **Offline-first ready** architecture
