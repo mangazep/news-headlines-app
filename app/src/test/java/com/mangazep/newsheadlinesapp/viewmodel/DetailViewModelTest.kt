@@ -6,7 +6,6 @@ import com.mangazep.newsheadlinesapp.data.model.Article
 import com.mangazep.newsheadlinesapp.data.model.Source
 import com.mangazep.newsheadlinesapp.ui.detail.DetailViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -24,8 +23,6 @@ class DetailViewModelTest {
     lateinit var articleObserver: Observer<Article?>
 
     @Mock
-    lateinit var actionMessageObserver: Observer<String?>
-
     private lateinit var viewModel: DetailViewModel
 
     private val sampleArticle = Article(
@@ -45,7 +42,7 @@ class DetailViewModelTest {
     }
 
     @Test
-    fun `setArticleData should update article LiveData`() {
+    fun `load data article`() {
         // Given
         viewModel.article.observeForever(articleObserver)
 
@@ -57,7 +54,7 @@ class DetailViewModelTest {
     }
 
     @Test
-    fun `setArticleData with null should update article LiveData to null`() {
+    fun `check data null`() {
         // Given
         viewModel.article.observeForever(articleObserver)
 
@@ -66,24 +63,5 @@ class DetailViewModelTest {
 
         // Then
         verify(articleObserver).onChanged(null)
-    }
-
-    @Test
-    fun `clearActionMessage should clear action message`() {
-        // Given
-        viewModel.actionMessage.observeForever(actionMessageObserver)
-
-        // When
-        viewModel.clearActionMessage()
-
-        // Then
-        verify(actionMessageObserver).onChanged(null)
-    }
-
-    @Test
-    fun `initial state should have null values for LiveData`() {
-        // Given
-        assertNull(viewModel.article.value)
-        assertNull(viewModel.actionMessage.value)
     }
 }

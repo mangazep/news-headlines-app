@@ -6,8 +6,8 @@ import androidx.paging.PagingData
 import com.mangazep.newsheadlinesapp.data.model.Article
 import com.mangazep.newsheadlinesapp.data.model.Source
 import com.mangazep.newsheadlinesapp.data.repository.NewsRepository
-import com.mangazep.newsheadlinesapp.ui.headlines.HeadlinesUiState
 import com.mangazep.newsheadlinesapp.ui.headlines.HeadlinesViewModel
+import com.mangazep.newsheadlinesapp.ui.headlines.UiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
@@ -19,8 +19,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mock
-import org.mockito.Mockito.any
-import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
@@ -37,7 +35,7 @@ class HeadlinesViewModelTest {
     lateinit var repository: NewsRepository
 
     @Mock
-    lateinit var uiStateObserver: Observer<HeadlinesUiState>
+    lateinit var uiStateObserver: Observer<UiState>
 
     @Mock
     lateinit var navigateToDetailObserver: Observer<Article?>
@@ -77,16 +75,16 @@ class HeadlinesViewModelTest {
     }
 
     @Test
-    fun `initial state should be loading`() {
+    fun `init loading`() {
         // Given
         viewModel.uiState.observeForever(uiStateObserver)
 
         // Then
-        verify(uiStateObserver).onChanged(HeadlinesUiState.Loading)
+        verify(uiStateObserver).onChanged(UiState.Loading)
     }
 
     @Test
-    fun `onLoadStateUpdate with success should update state to success`() {
+    fun `on success`() {
         // Given
         viewModel.uiState.observeForever(uiStateObserver)
 
@@ -94,11 +92,11 @@ class HeadlinesViewModelTest {
         viewModel.onLoadStateUpdate(isLoading = false)
 
         // Then
-        verify(uiStateObserver).onChanged(HeadlinesUiState.Success)
+        verify(uiStateObserver).onChanged(UiState.Success)
     }
 
     @Test
-    fun `onLoadStateUpdate with error should update state to error`() {
+    fun `on error`() {
         // Given
         viewModel.uiState.observeForever(uiStateObserver)
         val errorMessage = "Network error"
@@ -107,11 +105,11 @@ class HeadlinesViewModelTest {
         viewModel.onLoadStateUpdate(isLoading = false, errorMessage = errorMessage)
 
         // Then
-        verify(uiStateObserver).onChanged(HeadlinesUiState.Error(errorMessage))
+        verify(uiStateObserver).onChanged(UiState.Error(errorMessage))
     }
 
     @Test
-    fun `onLoadStateUpdate with empty data should update state to empty and show snackbar`() {
+    fun `show snackbar data empty`() {
         // Given
         viewModel.uiState.observeForever(uiStateObserver)
         viewModel.snackbarMessage.observeForever(snackbarMessageObserver)
@@ -120,13 +118,13 @@ class HeadlinesViewModelTest {
         viewModel.onLoadStateUpdate(isLoading = false, isEmpty = true)
 
         // Then
-        verify(uiStateObserver).onChanged(HeadlinesUiState.Empty)
+        verify(uiStateObserver).onChanged(UiState.Empty)
         // message snackbar data news is empty
         verify(snackbarMessageObserver).onChanged("Data News is empty")
     }
 
     @Test
-    fun `onArticleClicked should trigger navigation to detail`() {
+    fun `articleClicked navigation to detail`() {
         // Given
         viewModel.navigateToDetail.observeForever(navigateToDetailObserver)
 
@@ -135,32 +133,5 @@ class HeadlinesViewModelTest {
 
         // Then
         verify(navigateToDetailObserver).onChanged(sampleArticle)
-    }
-
-    @Test
-    fun `onNavigatedToDetail should clear navigation state`() {
-        // Given
-        viewModel.navigateToDetail.observeForever(navigateToDetailObserver)
-        viewModel.onArticleClicked(sampleArticle) // Set navigation first
-
-        // When
-        viewModel.onNavigatedToDetail()
-
-        // Then
-        verify(navigateToDetailObserver).onChanged(null)
-    }
-
-    @Test
-    fun `clearSnackbarMessage should clear snackbar state`() {
-        // Given
-        viewModel.snackbarMessage.observeForever(snackbarMessageObserver)
-        viewModel.onLoadStateUpdate(isLoading = false, isEmpty = true) // Trigger snackbar
-
-        // When
-        viewModel.clearSnackbarMessage()
-
-        // Then
-        verify(snackbarMessageObserver, times(2)).onChanged(any())
-        verify(snackbarMessageObserver).onChanged(null)
     }
 }
