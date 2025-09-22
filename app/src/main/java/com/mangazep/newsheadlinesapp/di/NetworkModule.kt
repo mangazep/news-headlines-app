@@ -1,7 +1,6 @@
 package com.mangazep.newsheadlinesapp.di
 
 import com.mangazep.newsheadlinesapp.data.api.NewsApiService
-import com.mangazep.newsheadlinesapp.util.Constants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -40,7 +39,7 @@ object NetworkModule {
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(Constants.BASE_URL)
+            .baseUrl("https://newsapi.org")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()

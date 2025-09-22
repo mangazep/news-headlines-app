@@ -4,11 +4,10 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.mangazep.newsheadlinesapp.data.api.NewsApiService
 import com.mangazep.newsheadlinesapp.data.model.Article
-import com.mangazep.newsheadlinesapp.util.Constants
 import retrofit2.HttpException
 import java.io.IOException
 
-class NewsPagingSource(private val apiService: NewsApiService) : PagingSource<Int, Article>() {
+class NewsPagingSource (private val apiService: NewsApiService) : PagingSource<Int, Article>() {
 
     override fun getRefreshKey(state: PagingState<Int, Article>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
@@ -22,7 +21,7 @@ class NewsPagingSource(private val apiService: NewsApiService) : PagingSource<In
 
         return try {
             val response = apiService.getTopHeadlines(
-                apiKey = Constants.API_KEY,
+                apiKey = "hardcode_apikey",
                 page = page,
                 pageSize = params.loadSize
             )
