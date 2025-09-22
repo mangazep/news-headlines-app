@@ -5,6 +5,7 @@ import com.mangazep.newsheadlinesapp.data.api.NewsApiService
 import com.mangazep.newsheadlinesapp.data.model.Article
 import com.mangazep.newsheadlinesapp.data.model.NewsResponse
 import com.mangazep.newsheadlinesapp.data.repository.NewsRepository
+import com.mangazep.newsheadlinesapp.util.Constants
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -50,12 +51,14 @@ class NewsRepositoryTest {
             )
         )
 
-        `when`(apiService.getTopHeadlines(
-            country = "id",
-            apiKey = "166c3872e66347dfa3d9eb6ea47726a1",
-            page = 1,
-            pageSize = 20
-        )).thenReturn(mockResponse)
+        `when`(
+            apiService.getTopHeadlines(
+                country = Constants.COUNTRY_ID,
+                apiKey = Constants.API_KEY,
+                page = 1,
+                pageSize = 20
+            )
+        ).thenReturn(mockResponse)
 
         // When
         val result = repository.getNewsHeadlines()
