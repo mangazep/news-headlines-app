@@ -31,7 +31,7 @@ class NewsPagingSource(private val apiService: NewsApiService) : PagingSource<In
             val nextKey = if (articles.isEmpty()) {
                 null
             } else {
-                page + (params.loadSize / NETWORK_PAGE_SIZE)
+                page + 1
             }
 
             LoadResult.Page(
